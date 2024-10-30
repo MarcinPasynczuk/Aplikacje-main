@@ -1,0 +1,45 @@
+services:
+  frontend:
+    build:
+      context: ./example_react
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend1
+      - backend2
+    environment:
+      VITE_BACKEND1_URL: http://backend1:5000
+      VITE_BACKEND2_URL: http://backend2:5001
+
+  backend1:
+    build:
+      context: ./backend_1
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URI: postgresql://user:password@db:5432/mydatabase
+      SECRET_KEY: your_secret_key
+
+  backend2:
+    build:
+      context: ./backend_2
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      DATABASE_URI: postgresql://user:password@db:5432/mydatabase
+
+  db:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
